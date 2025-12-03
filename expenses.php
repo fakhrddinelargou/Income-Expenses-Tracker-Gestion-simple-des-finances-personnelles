@@ -1,3 +1,13 @@
+<?php
+
+require_once 'db.php';
+
+$sql = "SELECT * FROM expense";
+
+$stmt = $db -> query($sql);
+$expenses_table = $stmt -> fetchAll (PDO::FETCH_ASSOC);
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -74,32 +84,18 @@
     </thead>
 
     <tbody>
-      <tr>
-        <td>
-          <span class="dot red"></span> 1
-        </td>
-        <td class="amount negative">-300 DH</td>
-        <td>Groceries</td>
-        <td><span class="badge red-b">2025-12-02</span></td>
-      </tr>
+      <?php foreach($expenses_table as $el) { ?>
+        <tr>
+          <td>
+            <span class="dot red"></span> <?= $el["id"] ?>
+          </td>
+          <td class="amount negative"><?= $el["montent"] ?> DH</td>
+          <td><?= $el["description"] ?></td>
+          <td><span class="badge red-b"><?= $el["date"] ?></span></td>
+        </tr>
+        <?php } ?>
+        
 
-      <tr>
-        <td>
-          <span class="dot red"></span> 2
-        </td>
-        <td class="amount negative">-150 DH</td>
-        <td>Internet Bill</td>
-        <td><span class="badge red-b">2025-12-03</span></td>
-      </tr>
-
-      <tr>
-        <td>
-          <span class="dot red"></span> 3
-        </td>
-        <td class="amount negative">-80 DH</td>
-        <td>Transport</td>
-        <td><span class="badge red-b">2025-12-04</span></td>
-      </tr>
     </tbody>
   </table>
 </div>

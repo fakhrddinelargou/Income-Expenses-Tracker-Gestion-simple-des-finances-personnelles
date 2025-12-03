@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Noto+Sans+Thaana:wght@100..900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style/main.css"> 
 <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -49,7 +49,64 @@
 
     <section class="main">
 
+    <div class="icon_salle">
+        <div class="in_icon">
+         <svg xmlns="http://www.w3.org/2000/svg" width="18px"  viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path fill="#3b82f6" d="M264 112L376 112C380.4 112 384 115.6 384 120L384 160L256 160L256 120C256 115.6 259.6 112 264 112zM208 120L208 160L128 160C92.7 160 64 188.7 64 224L64 320L576 320L576 224C576 188.7 547.3 160 512 160L432 160L432 120C432 89.1 406.9 64 376 64L264 64C233.1 64 208 89.1 208 120zM576 368L384 368L384 384C384 401.7 369.7 416 352 416L288 416C270.3 416 256 401.7 256 384L256 368L64 368L64 480C64 515.3 92.7 544 128 544L512 544C547.3 544 576 515.3 576 480L576 368z"/></svg>
+        </div>
 
+        
+        Incomes
+    </div>
+
+    <section class="section_table">
+
+    <div class="card">
+  <h2 class="title">Incomes</h2>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Montant</th>
+        <th>Description</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td>
+          <span class="dot blue"></span> 1
+        </td>
+        <td class="amount positive">+1500 DH</td>
+        <td>Salary Payment</td>
+        <td><span class="badge blue-b">2025-12-01</span></td>
+      </tr>
+
+      <tr>
+        <td>
+          <span class="dot red"></span> 2
+        </td>
+        <td class="amount negative">-300 DH</td>
+        <td>Groceries</td>
+        <td><span class="badge red-b">2025-12-02</span></td>
+      </tr>
+
+      <tr>
+        <td>
+          <span class="dot yellow"></span> 3
+        </td>
+        <td class="amount negative">-150 DH</td>
+        <td>Internet Bill</td>
+        <td><span class="badge yellow-b">2025-12-03</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+    </section>
 
     </section>
 </main>

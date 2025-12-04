@@ -433,3 +433,53 @@
   from { opacity: 0; transform: translate(-50%, -10px); }
   to { opacity: 1; transform: translate(-50%, 0); }
 }
+
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 20px;
+  margin: 20px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card .label {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.card .value {
+  font-size: 26px;
+  font-weight: bold;
+  color: #111827;
+}
+
+/* Red card (expenses) */
+.card.red {
+  background: #fee2e2;
+}
+
+.card.red .value {
+  color: #b91c1c;
+}
+
+/* Balance card */
+.card.balance {
+  background: #dbeafe;
+}
+
+.card.balance .value {
+  color: #1d4ed8;
+}

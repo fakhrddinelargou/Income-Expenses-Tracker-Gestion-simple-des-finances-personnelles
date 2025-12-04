@@ -1,3 +1,22 @@
+<?php
+
+
+require_once "db.php";
+
+$expStmt=$db->query("SELECT SUM(montent) AS total_expenses FROM expense");
+$ttldr = $expStmt->fetch(PDO::FETCH_ASSOC);
+$ttl = $ttldr["total_expenses"]  ?? 0;
+
+
+$incStmt =$db->query("SELECT SUM(montent) AS total_incomes FROM income");
+$tllinc =$incStmt->fetch(PDO::FETCH_ASSOC);
+$ttlin = $tllinc['total_incomes'] ?? 0 ;
+
+
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,6 +68,39 @@
 
     <section class="main">
 
+<section class="dashboard-cards">
+
+  <!-- Total Income -->
+  <div class="card">
+    <p class="label">Total Income</p>
+    <h2 class="value" id="totalIncome"><?= $ttlin ?> DH</h2>
+  </div>
+
+  <!-- Total Expenses -->
+  <div class="card red">
+    <p class="label">Total Expenses</p>
+    <h2 class="value" id="totalExpenses"><?= $ttl ?> DH</h2>
+  </div>
+
+  <!-- Current Balance -->
+  <div class="card balance">
+    <p class="label">Current Balance</p>
+    <h2 class="value" id="currentBalance">0 DH</h2>
+  </div>
+
+  <!-- This Month Income -->
+  <div class="card">
+    <p class="label">Income This Month</p>
+    <h2 class="value" id="incomeMonth">0 DH</h2>
+  </div>
+
+  <!-- This Month Expenses -->
+  <div class="card red">
+    <p class="label">Expenses This Month</p>
+    <h2 class="value" id="expensesMonth">0 DH</h2>
+  </div>
+
+</section>
 
 
     </section>

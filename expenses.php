@@ -35,22 +35,15 @@ do{
     $successMessage = "Expense added correctely";
 
   }while(false);
-
-
-  if(isset($_GET['id'])){
-    echo $_GET['id'];
-    $delet = intval($_GET['id']);
-    $stm = $db->premare("DELETE FROM expense WHERE id = ?");
-    $stm->execute($delet);
-    header("Location : expenses.php?deleted=1");
-    exit;
-  }
-
-
-
-
 }
 
+if(isset($_GET['id'])){
+  $delet = intval($_GET['id']);
+  $stm = $db->prepare("DELETE FROM expense WHERE id = ?");
+  $stm->execute([$delet]);
+  header("Location: expenses.php?deleted=1");
+  exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

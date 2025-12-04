@@ -1,51 +1,77 @@
 <?php
 require_once 'db.php';
 
+// AFFICHER INCOMES
 $sql = "SELECT * FROM income ";
 $stmt = $db->query($sql);
 $incomes_table = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+// OPEN FORM
 $show_form = isset($_GET['show']) ? true : false;
 
 $montent ="";
 $description ="";
 $date ="";
-  $errorMessage = "";
-  $successMessage ="";
+$errorMessage = "";
+$successMessage ="";
+
+
+if (isset($_GET['edit'])) {
+    $edit = intval($_GET['edit']);
+    $stmt = $db->prepare("SELECT * FROM income WHERE id=?");
+    $stmt->execute([$edit]);
+    $getData = $stmt->fetch(PDO::FETCH_ASSOC);
+    $show_form = true;
+}
+
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 
-$montent =$_POST["montent"];
-$description =$_POST["description"];
-$date =$_POST["date"];  
-do{
-if(empty($montent) || empty($description) || empty($date) ){
+  $id = $_POST['id'];
+  $montent =$_POST['montent'];
+$description =$_POST['description'];
+$date =$_POST['date'];
 
-  $errorMessage = "All feilds are required";
- break;
+if(!empty($id)){
+  
+    $stmt = $db->prepare("UPDATE income 
+                                   SET montent=?, description=?, date=?
+                                   WHERE id=?");
+            $stmt->execute([$montent,$description,$date,$id]);
+            $successMessage = "Income updated successfully";
+           
+}else{
+
+  if(!is_numeric($montent) && empty($montent) ||  empty($description) || empty($date) ){
+
+    $errorMessage = "All feilds are requered";
+
+  }else{
+
+    
+    $stmt = $db->prepare("INSERT INTO income (montent, description, date)
+                                  VALUES (?, ?, ?)");
+            $stmt->execute([$montent,$description,$date]);
+            $successMessage = "Income added successfully";
+          }
+
 }
 
-$postdt = "INSERT INTO income (montent , description , date) " ." VALUES ('$montent' , '$description' , '$date')";
-
-$stsql = $db->query($postdt);
-
-
-$montent ="";
-$description ="";
-$date ="";
-
-$successMessage = "Income added correctely";
-
-
-}while(false);
-
 }
+
+
+
+
+
+
+
+
+
+
 
 
 if(isset($_GET['dt'])) {
 
     $delet = intval($_GET['dt']);  
-
     $stmt = $db->prepare("DELETE FROM income WHERE id = ?");
     $stmt->execute([$delet]);
     header("Location: Incomes.php?deleted=1");
@@ -196,7 +222,7 @@ if(isset($_GET['dt'])) {
     
 
 <!-- OPEN FORM -->
-<?php if($show_form) { ?> 
+<?php if($show_form || isset($_GET['edit'])) { ?> 
 <section class="container_form">
 <!-- INPUT INVALID -->
 <?php
@@ -233,31 +259,32 @@ if(!empty($successMessage)){
 
           <button class="close-btn" type="button">×</button>
         </a>
-  <h2 class="title">Add Transaction</h2>
+ <h2 class="title"><?= isset($getData) ? "Edit Transaction" : "Add Transaction" ?></h2>
 
-  <form action="incomes.php?show=1" method="POST" class="form">
-      
+
+  <form action="incomes.php?<?= isset($getData) ? "edit=".$getData['id'] : "show=1"  ?>" method="POST" class="form">
+      <input type="hidden" name="id" value="<?= isset($getData) ? $getData['id'] : "" ?>">
     <!-- MONTANT -->
     <div class="form-group">
       <label>Montant</label>
-      <input type="number" placeholder="Ex: 1500" name="montent" value="<?php echo $montent  ?>"   >
+      <input type="number" placeholder="Ex: 1500" name="montent" value="<?= isset($getData) ? $getData['montent'] : $montent  ?>"   >
     </div>
 
     <!-- DESCRIPTION -->
     <div class="form-group">
       <label>Description</label>
-      <input type="text" placeholder="Ex: Salary or Groceries" name="description" value="<?php echo $description  ?>" >
+      <input type="text" placeholder="Ex: Salary or Groceries" name="description" value="<?= isset($getData) ? $getData['description'] : $description  ?>" >
     </div>
 
     <!-- DATE -->
     <div class="form-group">
       <label>Date</label>
-      <input type="date" name="date" value="<?php echo $date  ?>" >
+      <input type="date" name="date" value="<?= isset($getData) ? $getData['date'] : $date  ?>" >
     </div>
 
     <!-- BUTTON -->
      
-    <button class="submit-btn" type="submit">Add</button>
+    <button class="submit-btn" type="submit"><?= isset($getData) ? "Update" : "Add" ?></button>
 
   </form>
 </div>

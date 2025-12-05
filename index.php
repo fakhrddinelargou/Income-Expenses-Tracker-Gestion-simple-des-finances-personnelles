@@ -21,9 +21,47 @@ $gdataI = $db->query("SELECT  SUM(montent)  AS total_month_incomes FROM income  
 $gdatacI = $gdataI->fetch(PDO::FETCH_ASSOC);
 $tlasmonthI = $gdatacI['total_month_incomes'] ?? 0;
 
+
 $gdataE =$db -> query("SELECT SUM(montent) AS total_month_expenses FROM expense WHERE YEAR(date)=$currYear AND MONTH(date)=$currMonth");
 $gdatacE = $gdataE->fetch(PDO::FETCH_ASSOC);
 $tlasmonthE = $gdatacE['total_month_expenses'] ?? 0;
+
+
+$yearsIncome = $db->query("
+    SELECT YEAR(date) AS year, SUM(montent) AS total
+    FROM income
+    GROUP BY YEAR(date)
+")->fetchAll(PDO::FETCH_ASSOC);
+
+
+$yearsExpense = $db->query("
+    SELECT YEAR(date) AS year, SUM(montent) AS total
+    FROM expense
+    GROUP BY YEAR(date)
+")->fetchAll(PDO::FETCH_ASSOC);
+
+
+$labels = [];
+$incomeData = [];
+$expenseData = [];
+
+foreach ($yearsIncome as $row) {
+    $labels[] = $row['year'];
+    $incomeData[] = $row['total'];
+}
+
+foreach ($yearsExpense as $row) {
+    $year = $row['year'];
+    $key = array_search($year, $labels);
+
+    if ($key !== false) {
+        $expenseData[$key] = $row['total'];
+    } else {
+        $labels[] = $year;
+        $incomeData[] = 0;
+        $expenseData[] = $row['total'];
+    }
+}
 
 ?>
 
@@ -43,7 +81,7 @@ $tlasmonthE = $gdatacE['total_month_expenses'] ?? 0;
 
 <main class="container">
 
-<section class="sidebar">
+<section class="sidebar ">
     <div class="logo">
     
 <div class="svg">   
@@ -78,7 +116,14 @@ $tlasmonthE = $gdatacE['total_month_expenses'] ?? 0;
 
 
     <section class="main">
+ <div class="icon_salle icon_dash">
+        <div class="in_icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18px" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path fill="#3b82f6" d="M341.8 72.6C329.5 61.2 310.5 61.2 298.3 72.6L74.3 280.6C64.7 289.6 61.5 303.5 66.3 315.7C71.1 327.9 82.8 336 96 336L112 336L112 512C112 547.3 140.7 576 176 576L464 576C499.3 576 528 547.3 528 512L528 336L544 336C557.2 336 569 327.9 573.8 315.7C578.6 303.5 575.4 289.5 565.8 280.6L341.8 72.6zM304 384L336 384C362.5 384 384 405.5 384 432L384 528L256 528L256 432C256 405.5 277.5 384 304 384z"/></svg>
+        </div>
 
+        
+        Dashboard
+    </div>
 <section class="dashboard-cards">
 
   <!-- Total Income -->
@@ -124,8 +169,55 @@ $tlasmonthE = $gdatacE['total_month_expenses'] ?? 0;
 </section>
 
 
+
+    <section class="chart_container">
+        
+
+
+<div style="width: 500px;">
+<canvas id="chartReEx"></canvas>
+</div>
+
+
+</section>
     </section>
 </main>
-    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+
+        let labels = <?= json_encode($labels) ?>;
+let incomeData = <?= json_encode($incomeData) ?>;
+let expenseData = <?= json_encode($expenseData) ?>;   
+ const ctx = document.getElementById('chartReEx').getContext('2d');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [
+            {
+                label: 'Revenus',
+                data: incomeData,
+                backgroundColor: 'rgba(27, 165, 31, 0.8)'
+            },
+            {
+                label: 'Dépenses',
+                data: expenseData,
+                backgroundColor: 'rgba(232, 41, 27, 0.8)'
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: { beginAtZero: true }
+        }
+    }
+});
+
+
+
+
+</script>
 </body>
 </html>

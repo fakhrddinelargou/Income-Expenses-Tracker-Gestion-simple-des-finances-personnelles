@@ -158,7 +158,9 @@ body{
 .main{
     width: 80%;
     height: 100vh;
-    
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .Wr{

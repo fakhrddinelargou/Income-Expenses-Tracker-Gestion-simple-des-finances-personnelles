@@ -43,7 +43,7 @@ $successMessage = "Expense updated successfully";
 
 
 
-  $stmt = $db->prepare("INSERT INTO income (montent, description, date)
+  $stmt = $db->prepare("INSERT INTO expense (montent, description, date)
                                   VALUES (?, ?, ?)");
             $stmt->execute([$montent,$description,$date]);
             $successMessage = "Income added successfully";

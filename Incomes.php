@@ -97,7 +97,7 @@ if(isset($_GET['dt'])) {
 
 <main class="container">
 
-<section class="sidebar">
+<section class="sidebar ">
     <div class="logo">
     
 <div class="svg">   

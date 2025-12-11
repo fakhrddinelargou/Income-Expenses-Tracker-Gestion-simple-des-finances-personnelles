@@ -139,7 +139,7 @@ if(!empty($fullName) && empty($ftEmail) && !empty($password) ){
                 <input type="email" class="input <?= empty($ftEmail) ? "error" : ""  ?>" name="email" placeholder="Email">
                 <input type="password" class="input" name="password" placeholder="Password">
             </div>
-            <button>Sign up</button>
+            <button type="submit" >Sign up</button>
         </form>
         <div class="form-section">
             <p>Have an account? <a href="">Log in</a> </p>

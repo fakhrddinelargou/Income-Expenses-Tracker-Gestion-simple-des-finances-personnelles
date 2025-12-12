@@ -539,3 +539,25 @@
 
   
 }
+
+.logout{
+position: absolute;
+bottom: 10px;
+left: 10px;
+padding: 10px;
+background: aliceblue;
+border-radius: 10px;
+border: solid rgba(102, 175, 253, 0.456);
+transition: .3s;
+}
+
+.logout a{
+  color: black;
+  text-decoration: none;
+  font-weight: 700;
+  
+}
+
+.logout:hover{
+  transform: scale(1.03);
+}

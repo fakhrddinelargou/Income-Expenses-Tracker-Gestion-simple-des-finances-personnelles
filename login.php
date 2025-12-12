@@ -8,11 +8,14 @@ $passwordLogin = "" ;
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     $email = $_POST["email"];
     $passwordLogin = $_POST["password"];
-    $srEmail = $db->query("SELECT password FROM registers WHERE   email = '$email' ");
+    $srEmail = $db->query("SELECT * FROM registers WHERE   email = '$email' ");
     $ftPass = $srEmail->fetch(PDO::FETCH_ASSOC);
     if($ftPass){
         $isExist = password_verify($passwordLogin,$ftPass['password']);
         if($isExist){
+        session_start();
+        $_SESSION["user_id"] = $ftPass['id'];
+        $_SESSION["user_name"] = $ftPass['fullName'];
             header("Location: Incomes.php");
         }
     }
@@ -276,7 +279,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 </button>
             </div>
         </div>
-        <span class="agreement"><a href="#">Learn user licence agreement</a></span>
+        <span class="agreement"><a href="/regester.php">Sign up</a></span>
     </div>
 </section>
 

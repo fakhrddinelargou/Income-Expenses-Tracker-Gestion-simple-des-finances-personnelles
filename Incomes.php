@@ -1,14 +1,26 @@
 <?php
 require_once 'db.php';
 
+ session_start();
+$userID =  $_SESSION["user_id"] ;
+$userName =  $_SESSION["user_name"] ;
+if (!isset($userID)) {
+    header("Location: login.php");
+    exit;
+}
+ if(isset($_GET['logout'])){
+    session_unset();
+    session_destroy();
+    header("Location: login.php");
+ }
 // AFFICHER INCOMES
-$sql = "SELECT * FROM income ";
+$sql = "SELECT * FROM income WHERE user_id =  $userID ";
 $stmt = $db->query($sql);
 $incomes_table = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // OPEN FORM
 $show_form = isset($_GET['show']) ? true : false;
 
-$montent ="";
+$amount ="";
 $description ="";
 $date ="";
 $errorMessage = "";
@@ -27,30 +39,30 @@ if (isset($_GET['edit'])) {
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 
   $id = $_POST['id'];
-  $montent =$_POST['montent'];
+  $amount =$_POST['amount'];
 $description =$_POST['description'];
 $date =$_POST['date'];
 
 if(!empty($id)){
   
     $stmt = $db->prepare("UPDATE income 
-                                   SET montent=?, description=?, date=?
+                                   SET amount=?, description=?, date=?
                                    WHERE id=?");
-            $stmt->execute([$montent,$description,$date,$id]);
+            $stmt->execute([$amount,$description,$date,$id]);
             $successMessage = "Income updated successfully";
            
 }else{
 
-  if(!is_numeric($montent) && empty($montent) ||  empty($description) || empty($date) ){
+  if(!is_numeric($amount) && empty($amount) ||  empty($description) || empty($date) ){
 
     $errorMessage = "All feilds are requered";
 
   }else{
 
     
-    $stmt = $db->prepare("INSERT INTO income (montent, description, date)
-                                  VALUES (?, ?, ?)");
-            $stmt->execute([$montent,$description,$date]);
+    $stmt = $db->prepare("INSERT INTO income (amount, description, date , user_id)
+                                  VALUES (?, ?, ? , ?)");
+            $stmt->execute([$amount,$description,$date,$userID]);
             $successMessage = "Income added successfully";
           }
 
@@ -107,7 +119,7 @@ if(isset($_GET['dt'])) {
         <div class="profile">
             <img src="/images/profile.jpg" alt="">
             <div class="user_name_role">
-                <p>Fakhreddine Largou</p>
+                <p><?= $userName  ?></p>
                 <p>Project Manager</p>
             </div>
         </div>
@@ -128,6 +140,9 @@ if(isset($_GET['dt'])) {
         <input class="hidden" type="chechbox" id="hide_sidebar">
         <input class="hidden" type="chechbox" id="show_sidebar">
     </div> -->
+        <button class="logout">
+        <a href="Incomes.php?logout=1">Log out</a>
+    </button>
     </section>
 
 
@@ -178,7 +193,7 @@ if(isset($_GET['dt'])) {
           <td>
             <span class="dot blue"></span> <?= $el['id'] ?>
           </td>
-          <td class="amount positive">$<?= $el['montent'] ?></td>
+          <td class="amount positive">$<?= $el['amount'] ?></td>
           <td><?= $el['description'] ?></td>
           <td><span class="badge blue-b"><?= $el['date'] ?></span></td>
 <td class="actions-cell">
@@ -267,7 +282,7 @@ if(!empty($successMessage)){
     <!-- MONTANT -->
     <div class="form-group">
       <label>Montant</label>
-      <input type="number" placeholder="Ex: 1500" name="montent" value="<?= isset($getData) ? $getData['montent'] : $montent  ?>"   >
+      <input type="number" placeholder="Ex: 1500" name="amount" value="<?= isset($getData) ? $getData['amount'] : $amount  ?>"   >
     </div>
 
     <!-- DESCRIPTION -->

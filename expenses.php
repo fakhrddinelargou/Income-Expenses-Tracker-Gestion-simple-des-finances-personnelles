@@ -1,14 +1,25 @@
 <?php
 
 require_once 'db.php';
-
+ session_start();
+$userID =  $_SESSION["user_id"] ;
+$userName =  $_SESSION["user_name"] ;
+if (!isset($userID)) {
+    header("Location: login.php");
+    exit;
+}
+ if(isset($_GET['logout'])){
+    session_unset();
+    session_destroy();
+    header("Location: login.php");
+ }
 $sql = "SELECT * FROM expense";
 $stmt = $db -> query($sql);
 $expenses_table = $stmt -> fetchAll (PDO::FETCH_ASSOC);
 
 $show_form = isset($_GET["show"]) ? true : false;
 
-$montent = "";
+$amount = "";
 $description = "";
 $date = "";
 
@@ -26,26 +37,26 @@ if(isset($_GET['edit'])){
 if($_SERVER["REQUEST_METHOD"] == 'POST'){
   
   $id = $_POST["id"];
-  $montent = $_POST["montent"];
+  $amount = $_POST["amount"];
   $description = $_POST["description"];
   $date = $_POST["date"];
 if(!empty($id)){
 
-  $stt = $db->prepare("UPDATE expense SET montent=? , description=? , date=? WHERE id=?");
-  $stt->execute([$montent,$description,$date,$id]);
+  $stt = $db->prepare("UPDATE expense SET amount=? , description=? , date=? WHERE id=?");
+  $stt->execute([$amount,$description,$date,$id]);
 $successMessage = "Expense updated successfully";
 
 }else{
 
- if(!is_numeric($montent) || empty($description) || empty($date)){
+ if(!is_numeric($amount) || empty($description) || empty($date)){
       $errorMessage = "All feilds are required";
     }else{
 
 
 
-  $stmt = $db->prepare("INSERT INTO expense (montent, description, date)
-                                  VALUES (?, ?, ?)");
-            $stmt->execute([$montent,$description,$date]);
+  $stmt = $db->prepare("INSERT INTO expense (amount, description, date , user_id)
+                                  VALUES (?, ?, ? , ?)");
+            $stmt->execute([$amount,$description,$date , $userID]);
             $successMessage = "Income added successfully";
           
     }
@@ -105,7 +116,7 @@ if(isset($_GET['id'])){
         <div class="profile">
             <img src="/images/profile.jpg" alt="">
             <div class="user_name_role">
-                <p>Fakhreddine Largou</p>
+                <p><?= $userName ?></p>
                 <p>Project Manager</p>
             </div>
         </div>
@@ -126,6 +137,10 @@ if(isset($_GET['id'])){
         <input class="hidden" type="chechbox" id="hide_sidebar">
         <input class="hidden" type="chechbox" id="show_sidebar">
     </div> -->
+
+        <button class="logout">
+        <a href="expenses.php?logout=1">Log out</a>
+    </button>
     </section>
 
 
@@ -171,7 +186,7 @@ if(isset($_GET['id'])){
     <?php foreach($expenses_table as $el) { ?>
       <tr>
         <td><span class="dot red"></span> <?= $el["id"] ?></td>
-        <td class="amount negative"><?= $el["montent"] ?> DH</td>
+        <td class="amount negative"><?= $el["amount"] ?> DH</td>
         <td><?= $el["description"] ?></td>
         <td><span class="badge red-b"><?= $el["date"] ?></span></td>
 
@@ -261,7 +276,7 @@ if(!empty($successMessage)){
     <!-- MONTANT -->
     <div class="form-group">
       <label>Montant</label>
-      <input type="number" placeholder="Ex: 1500" name="montent" value="<?= isset($getData) ? $getData['montent'] : $montent  ?>"   >
+      <input type="number" placeholder="Ex: 1500" name="amount" value="<?= isset($getData) ? $getData['amount'] : $amount  ?>"   >
     </div>
 
     <!-- DESCRIPTION -->

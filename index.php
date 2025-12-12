@@ -2,13 +2,24 @@
 
 
 require_once "db.php";
-
-$expStmt=$db->query("SELECT SUM(montent) AS total_expenses FROM expense");
+ session_start();
+ if(isset($_GET['logout'])){
+    session_unset();
+    session_destroy();
+    header("Location: login.php");
+ }
+$userID =  $_SESSION["user_id"] ;
+$userName =  $_SESSION["user_name"] ;
+if (!isset($userID)) {
+    header("Location: login.php");
+    exit;
+}
+$expStmt=$db->query("SELECT SUM(amount) AS total_expenses FROM expense WHERE user_id = $userID ");
 $ttldr = $expStmt->fetch(PDO::FETCH_ASSOC);
 $ttl = $ttldr["total_expenses"]  ?? 0;
 
 
-$incStmt =$db->query("SELECT SUM(montent) AS total_incomes FROM income");
+$incStmt =$db->query("SELECT SUM(amount) AS total_incomes FROM income WHERE user_id = $userID");
 $tllinc =$incStmt->fetch(PDO::FETCH_ASSOC);
 $ttlin = $tllinc['total_incomes'] ?? 0 ;
 
@@ -17,27 +28,26 @@ $tcb = $ttlin - $ttl;
 // $date = date("Y-m-d")
 $currYear = date("Y");
 $currMonth = date("m");
-$gdataI = $db->query("SELECT  SUM(montent)  AS total_month_incomes FROM income  WHERE YEAR(date)=$currYear  AND MONTH(date)=$currMonth ");
+$gdataI = $db->query("SELECT  SUM(amount)  AS total_month_incomes FROM income  WHERE  user_id = $userID AND  YEAR(date)=$currYear  AND MONTH(date)=$currMonth  ");
 $gdatacI = $gdataI->fetch(PDO::FETCH_ASSOC);
 $tlasmonthI = $gdatacI['total_month_incomes'] ?? 0;
 
 
-$gdataE =$db -> query("SELECT SUM(montent) AS total_month_expenses FROM expense WHERE YEAR(date)=$currYear AND MONTH(date)=$currMonth");
+$gdataE =$db -> query("SELECT SUM(amount) AS total_month_expenses FROM expense WHERE user_id = $userID AND YEAR(date)=$currYear AND MONTH(date)=$currMonth");
 $gdatacE = $gdataE->fetch(PDO::FETCH_ASSOC);
 $tlasmonthE = $gdatacE['total_month_expenses'] ?? 0;
 
 
 $yearsIncome = $db->query("
-    SELECT YEAR(date) AS year, SUM(montent) AS total
-    FROM income
-    GROUP BY YEAR(date)
+    SELECT YEAR(date) AS year, SUM(amount) AS total
+    FROM income WHERE  user_id = $userID GROUP BY YEAR(date)
 ")->fetchAll(PDO::FETCH_ASSOC);
 
 
 $yearsExpense = $db->query("
-    SELECT YEAR(date) AS year, SUM(montent) AS total
+    SELECT YEAR(date) AS year, SUM(amount) AS total
     FROM expense
-    GROUP BY YEAR(date)
+  WHERE user_id = $userID GROUP BY YEAR(date)
 ")->fetchAll(PDO::FETCH_ASSOC);
 
 
@@ -91,7 +101,7 @@ foreach ($yearsExpense as $row) {
         <div class="profile">
             <img src="/images/profile.jpg" alt="">
             <div class="user_name_role">
-                <p>Fakhreddine Largou</p>
+                <p><?= $userName ?></p>
                 <p>Project Manager</p>
             </div>
         </div>
@@ -112,6 +122,11 @@ foreach ($yearsExpense as $row) {
         <input class="hidden" type="chechbox" id="hide_sidebar">
         <input class="hidden" type="chechbox" id="show_sidebar">
     </div> -->
+
+    <button class="logout">
+        <a href="index.php?logout=1">Log out</a>
+    </button>
+
     </section>
 
 
